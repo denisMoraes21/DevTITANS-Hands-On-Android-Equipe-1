@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.example.plaintext.data.model.PasswordInfo
 import com.example.plaintext.ui.screens.Screen
 import com.example.plaintext.ui.screens.login.TopBarComponent
+import com.example.plaintext.data.PasswordMemoryStore
 
 data class EditListState(
     val nomeState: MutableState<String>,
@@ -114,7 +115,18 @@ fun EditList(
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
-                onClick = { }
+                onClick = {
+                    savePassword(
+                        PasswordInfo(
+                            id = args.password.id,
+                            name = nome.value,
+                            login = usuario.value,
+                            password = senha.value,
+                            notes = notas.value
+                        )
+                    )
+                    navigateBack()
+                }
             ) {
                 Text("Salvar")
             }

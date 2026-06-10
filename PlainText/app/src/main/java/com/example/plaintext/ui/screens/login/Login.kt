@@ -55,6 +55,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
+import com.example.plaintext.data.UserSession
 
 data class LoginState(
     val preencher: Boolean,
@@ -68,6 +69,7 @@ data class LoginState(
 fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
+    navigateToRegister: () -> Unit,
     viewModel: PreferencesViewModel = hiltViewModel()
 ) {
 
@@ -132,9 +134,11 @@ fun Login_screen(
 
             Button(
                 onClick = {
-                    if (username == "admin" && password == "1234") {
+                    if ((username == UserSession.name && password == UserSession.password) ||
+                        (username == "admin" && password == "1234")) {
                         navigateToList()
-                    } else {
+                    }
+                    else {
                         Toast.makeText(
                             context,
                             "Usuário ou senha inválidos",
@@ -152,6 +156,7 @@ fun Login_screen(
             Button(
                 onClick = {
                     // futuramente abrir cadastro
+                    navigateToRegister()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

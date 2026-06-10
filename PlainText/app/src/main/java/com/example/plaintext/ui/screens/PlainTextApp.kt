@@ -22,6 +22,7 @@ import com.example.plaintext.ui.viewmodel.ListViewModel
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
+import com.example.plaintext.ui.screens.register.RegisterScreen
 
 @Composable
 fun PlainTextApp(
@@ -42,20 +43,43 @@ fun PlainTextApp(
                 navigateToSettings = {},
                 navigateToList = {
                     appState.navController.navigate(Screen.List)
+                },
+                navigateToRegister = {
+                    appState.navController.navigate(Screen.Register)
+                }
+            )
+        }
+        composable<Screen.Register> {
+            RegisterScreen(
+                navigateBack = {
+                    appState.navController.popBackStack()
                 }
             )
         }
         composable<Screen.List> {
-            ListView()
+            val viewModel: ListViewModel = hiltViewModel()
+            ListView(
+                viewModel = viewModel,
+                navigateToEdit = { password ->
+                    appState.navController.navigate(
+                        Screen.EditList(password)
+                    )
+                }
+            )
         }
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
         ) {
             val args = it.toRoute<Screen.EditList>()
+            val viewModel: ListViewModel = hiltViewModel()
             EditList(
                 args,
-                navigateBack = {},
-                savePassword = { password -> Unit }
+                navigateBack = {
+                    appState.navController.popBackStack()
+                },
+                savePassword = { password ->
+                    viewModel.savePassword(password)
+                }
             )
         }
     }

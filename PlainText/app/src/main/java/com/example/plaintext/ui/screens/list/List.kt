@@ -43,57 +43,39 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.plaintext.data.model.PasswordInfo
+import com.example.plaintext.data.PasswordMemoryStore
 
 @Composable
-fun ListView() {
+fun ListView(
+    viewModel: ListViewModel = hiltViewModel(),
+    navigateToEdit: (PasswordInfo) -> Unit
+) {
 
-    val state = ListViewState(
-        passwordList = listOf(
-            PasswordInfo(
-                id = 1,
-                name = "GitHub",
-                login = "leandro@gmail.com",
-                password = "123456",
-                notes = "Conta principal"
-            ),
-            PasswordInfo(
-                id = 2,
-                name = "Google",
-                login = "leandro@gmail.com",
-                password = "abcdef",
-                notes = "Gmail"
-            ),
-            PasswordInfo(
-                id = 3,
-                name = "Banco",
-                login = "123456789",
-                password = "senha123",
-                notes = "Conta bancária"
-            ),
-            PasswordInfo(
-                id = 4,
-                name = "Banco",
-                login = "admin",
-                password = "admin",
-                notes = "Conta bancária"
-            )
-        ),
-        isCollected = true
-    )
+    val state = viewModel.listViewState
 
     Scaffold(
         topBar = {
             TopBarComponent()
         },
         floatingActionButton = {
-            AddButton { }
+            AddButton {
+                navigateToEdit(
+                    PasswordInfo(
+                        id = 0,
+                        name = "",
+                        login = "",
+                        password = "",
+                        notes = ""
+                    )
+                )
+            }
         }
     ) { padding ->
 
         ListItemContent(
             modifier = Modifier.padding(padding),
             listState = state,
-            navigateToEdit = {}
+            navigateToEdit = navigateToEdit
         )
     }
 }
