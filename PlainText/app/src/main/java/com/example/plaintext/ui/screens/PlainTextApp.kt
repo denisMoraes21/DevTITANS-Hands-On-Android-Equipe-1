@@ -29,7 +29,8 @@ fun PlainTextApp(
 ) {
     NavHost(
         navController = appState.navController,
-        startDestination = Screen.Hello("DevTITANS"),
+//        startDestination = Screen.Hello("DevTITANS"),
+        startDestination = Screen.Login,
     )
     {
         composable<Screen.Hello>{
@@ -39,8 +40,13 @@ fun PlainTextApp(
         composable<Screen.Login>{
             Login_screen(
                 navigateToSettings = {},
-                navigateToList = {}
+                navigateToList = {
+                    appState.navController.navigate(Screen.List)
+                }
             )
+        }
+        composable<Screen.List> {
+            ListView()
         }
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())

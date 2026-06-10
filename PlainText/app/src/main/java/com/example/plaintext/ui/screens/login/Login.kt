@@ -71,6 +71,94 @@ fun Login_screen(
     viewModel: PreferencesViewModel = hiltViewModel()
 ) {
 
+    var username by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var password by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    Scaffold(
+        topBar = {
+            TopBarComponent()
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(padding)
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "Password Manager",
+                fontSize = 28.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Faça login para acessar suas senhas"
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Usuário") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Senha") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            val context = LocalContext.current
+
+            Button(
+                onClick = {
+                    if (username == "admin" && password == "1234") {
+                        navigateToList()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Usuário ou senha inválidos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Entrar")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    // futuramente abrir cadastro
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Criar Conta")
+            }
+        }
+    }
 }
 
 @Composable

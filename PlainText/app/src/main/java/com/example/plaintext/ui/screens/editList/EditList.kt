@@ -52,6 +52,74 @@ fun EditList(
     savePassword: (password: PasswordInfo) -> Unit
 ) {
 
+    val nome = rememberSaveable {
+        mutableStateOf(args.password.name)
+    }
+
+    val usuario = rememberSaveable {
+        mutableStateOf(args.password.login)
+    }
+
+    val senha = rememberSaveable {
+        mutableStateOf(args.password.password)
+    }
+
+    val notas = rememberSaveable {
+        mutableStateOf(args.password.notes)
+    }
+
+    Scaffold(
+        topBar = {
+            TopBarComponent()
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Cadastro de Senha",
+                fontSize = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            EditInput(
+                textInputLabel = "Nome",
+                textInputState = nome
+            )
+
+            EditInput(
+                textInputLabel = "Usuário",
+                textInputState = usuario
+            )
+
+            EditInput(
+                textInputLabel = "Senha",
+                textInputState = senha
+            )
+
+            EditInput(
+                textInputLabel = "Notas",
+                textInputState = notas,
+                textInputHeight = 120
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = { }
+            ) {
+                Text("Salvar")
+            }
+        }
+    }
 }
 
 

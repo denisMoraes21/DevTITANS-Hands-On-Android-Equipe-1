@@ -45,8 +45,58 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.plaintext.data.model.PasswordInfo
 
 @Composable
-fun ListView(
-) {}
+fun ListView() {
+
+    val state = ListViewState(
+        passwordList = listOf(
+            PasswordInfo(
+                id = 1,
+                name = "GitHub",
+                login = "leandro@gmail.com",
+                password = "123456",
+                notes = "Conta principal"
+            ),
+            PasswordInfo(
+                id = 2,
+                name = "Google",
+                login = "leandro@gmail.com",
+                password = "abcdef",
+                notes = "Gmail"
+            ),
+            PasswordInfo(
+                id = 3,
+                name = "Banco",
+                login = "123456789",
+                password = "senha123",
+                notes = "Conta bancária"
+            ),
+            PasswordInfo(
+                id = 4,
+                name = "Banco",
+                login = "admin",
+                password = "admin",
+                notes = "Conta bancária"
+            )
+        ),
+        isCollected = true
+    )
+
+    Scaffold(
+        topBar = {
+            TopBarComponent()
+        },
+        floatingActionButton = {
+            AddButton { }
+        }
+    ) { padding ->
+
+        ListItemContent(
+            modifier = Modifier.padding(padding),
+            listState = state,
+            navigateToEdit = {}
+        )
+    }
+}
 
 @Composable
 fun AddButton(onClick: () -> Unit) {
