@@ -1,2 +1,17 @@
 android-studio/
 android-studio-2024.*
+Jetcastersample/.idea/AndroidProjectSystem.xml
+Jetcastersample/gradle/libs.versions.toml
+Jetcastersample/gradle/wrapper/gradle-wrapper.properties
+PlainText/.gradle/8.9/executionHistory/executionHistory.bin
+PlainText/.gradle/8.9/executionHistory/executionHistory.lock
+PlainText/.gradle/8.9/fileHashes/fileHashes.bin
+PlainText/.gradle/8.9/fileHashes/fileHashes.lock
+PlainText/.gradle/8.9/fileHashes/resourceHashesCache.bin
+PlainText/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+PlainText/.gradle/buildOutputCleanup/outputFiles.bin
+PlainText/.gradle/config.properties
+PlainText/.gradle/file-system.probe
+PlainText/.idea/AndroidProjectSystem.xml
+PlainText/.idea/deploymentTargetSelector.xml
+PlainText/local.properties
