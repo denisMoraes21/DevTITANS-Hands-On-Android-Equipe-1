@@ -26,15 +26,15 @@ class PreferencesViewModel @Inject constructor(
         private set
 
     fun updateLogin(login: String) {
-
+        preferencesState = preferencesState.copy(login = login)
     }
 
     fun updatePassword(password: String) {
-
+        preferencesState = preferencesState.copy(password = password)
     }
 
     fun updatePreencher(preencher: Boolean) {
-
+        preferencesState = preferencesState.copy(preencher = preencher)
     }
 
     fun checkCredentials(login: String, password: String): Boolean{
