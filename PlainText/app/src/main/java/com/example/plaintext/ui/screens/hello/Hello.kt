@@ -69,6 +69,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.plaintext.R
+import com.example.plaintext.data.repository.PasswordDBStore
 import com.example.plaintext.ui.screens.Screen
 import com.example.plaintext.ui.theme.PlainTextTheme
 import com.example.plaintext.ui.viewmodel.ListViewState
@@ -103,7 +104,7 @@ data class listViewState(
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
-    private val dbSimulator: dbSimulator
+    private val passwordDBStore: PasswordDBStore
 ) : ViewModel() {
     var listState by mutableStateOf(listViewState())
         private set
