@@ -13,4 +13,19 @@ abstract class PasswordDao : BaseDao<Password> {
     """)
     abstract fun getByName(name: String): Flow<PasswordDao>
 
+    @Query("""
+        SELECT * FROM passwords WHERE login = :user
+    """)
+    abstract fun getByUser(user: String): Flow<PasswordDao>
+
+    @Query("""
+        SELECT * FROM passwords WHERE password = :password
+    """)
+    abstract fun getByPassword(password: String): Flow<PasswordDao>
+
+    @Query("""
+        SELECT * FROM passwords WHERE notes = :notes
+    """)
+    abstract fun getByNotes(notes: String): Flow<PasswordDao>
+
 }
