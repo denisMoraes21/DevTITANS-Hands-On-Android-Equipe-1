@@ -8,24 +8,35 @@ import com.example.plaintext.data.model.Password
 @Dao
 abstract class PasswordDao : BaseDao<Password> {
 
+    @Query(
+        """
+            SELECT * FROM passwords WHERE id = :id
+        """
+    )
+    abstract fun getByID(id: Int): Password?
+
     @Query("""
         SELECT * FROM passwords WHERE name = :name
     """)
-    abstract fun getByName(name: String): Flow<PasswordDao>
+    abstract fun getByName(name: String): Flow<Password?>
 
     @Query("""
         SELECT * FROM passwords WHERE login = :user
     """)
-    abstract fun getByUser(user: String): Flow<PasswordDao>
+    abstract fun getByUser(user: String): Flow<Password?>
 
     @Query("""
         SELECT * FROM passwords WHERE password = :password
     """)
-    abstract fun getByPassword(password: String): Flow<PasswordDao>
+    abstract fun getByPassword(password: String): Flow<Password?>
 
     @Query("""
         SELECT * FROM passwords WHERE notes = :notes
     """)
-    abstract fun getByNotes(notes: String): Flow<PasswordDao>
+    abstract fun getByNotes(notes: String): Flow<Password?>
 
+    @Query("""
+        SELECT * FROM passwords
+    """)
+    abstract fun getAll(): Flow<List<Password>>
 }
