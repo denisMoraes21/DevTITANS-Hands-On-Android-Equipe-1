@@ -83,7 +83,10 @@ fun Login_screen(
 
     Scaffold(
         topBar = {
-            TopBarComponent()
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {} // Placeholder
+            )
         }
     ) { padding ->
 

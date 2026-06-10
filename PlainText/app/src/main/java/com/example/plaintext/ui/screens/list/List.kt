@@ -48,14 +48,18 @@ import com.example.plaintext.data.PasswordMemoryStore
 @Composable
 fun ListView(
     viewModel: ListViewModel = hiltViewModel(),
-    navigateToEdit: (PasswordInfo) -> Unit
+    navigateToEdit: (PasswordInfo) -> Unit,
+    navigateToSettings: () -> Unit
 ) {
 
     val state = viewModel.listViewState
 
     Scaffold(
         topBar = {
-            TopBarComponent()
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {}
+            )
         },
         floatingActionButton = {
             AddButton {
