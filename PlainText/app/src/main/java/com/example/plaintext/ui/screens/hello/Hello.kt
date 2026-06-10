@@ -117,9 +117,9 @@ class ListViewModel @Inject constructor(
 
     fun collectData() {
         viewModelScope.launch {
-            dbSimulator.getData().collect {
-                listState = listState.copy(listState = it, size = it.size)
-            }
+//            dbSimulator.getData().collect {
+//                listState = listState.copy(listState = it, size = it.size)
+//            }
         }
     }
 }
