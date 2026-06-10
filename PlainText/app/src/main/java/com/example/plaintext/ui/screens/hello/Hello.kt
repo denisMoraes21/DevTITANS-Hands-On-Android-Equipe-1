@@ -70,6 +70,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.plaintext.R
 import com.example.plaintext.data.repository.PasswordDBStore
+import com.example.plaintext.data.model.Password
 import com.example.plaintext.ui.screens.Screen
 import com.example.plaintext.ui.theme.PlainTextTheme
 import com.example.plaintext.ui.viewmodel.ListViewState
@@ -110,17 +111,34 @@ class ListViewModel @Inject constructor(
         private set
 
     init {
+
         viewModelScope.launch {
             collectData()
         }
     }
 
     fun collectData() {
-        viewModelScope.launch {
-//            dbSimulator.getData().collect {
-//                listState = listState.copy(listState = it, size = it.size)
+        val mockPasswords = listOf(
+            Password(1, "Google", "denis@gmail.com", "123456"),
+            Password(2, "GitHub", "denis", "abcdef"),
+            Password(3, "Netflix", "denis@email.com", "senha123")
+        )
+
+        listState = listState.copy(
+            listState = mockPasswords.map { it.name },
+            size = mockPasswords.size
+        )
+
+//        viewModelScope.launch {
+//            passwordDBStore.getList().collect { passwords ->
+//                println("Recebidos: ${passwords.size}")
+//
+//                listState = listState.copy(
+//                    listState = passwords.map { it.name },
+//                    size = passwords.size
+//                )
 //            }
-        }
+//        }
     }
 }
 
