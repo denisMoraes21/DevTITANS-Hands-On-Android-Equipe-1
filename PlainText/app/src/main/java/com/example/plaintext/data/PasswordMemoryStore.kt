@@ -18,4 +18,8 @@ object PasswordMemoryStore {
             passwords.add(password.copy(id = newId))
         }
     }
+
+    fun delete(id: Int) {
+        passwords.removeAll { it.id == id }
+    }
 }

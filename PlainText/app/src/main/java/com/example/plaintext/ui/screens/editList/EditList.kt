@@ -50,7 +50,8 @@ fun isPasswordEmpty(password: PasswordInfo): Boolean {
 fun EditList(
     args: Screen.EditList,
     navigateBack: () -> Unit,
-    savePassword: (password: PasswordInfo) -> Unit
+    savePassword: (password: PasswordInfo) -> Unit,
+    deletePassword: (id: Int) -> Unit = {}
 ) {
 
     val nome = rememberSaveable {
@@ -114,21 +115,37 @@ fun EditList(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = {
-                    savePassword(
-                        PasswordInfo(
-                            id = args.password.id,
-                            name = nome.value,
-                            login = usuario.value,
-                            password = senha.value,
-                            notes = notas.value
-                        )
-                    )
-                    navigateBack()
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text("Salvar")
+                if (args.password.id != 0) {
+                    Button(
+                        onClick = {
+                            deletePassword(args.password.id)
+                            navigateBack()
+                        }
+                    ) {
+                        Text("Deletar")
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        savePassword(
+                            PasswordInfo(
+                                id = args.password.id,
+                                name = nome.value,
+                                login = usuario.value,
+                                password = senha.value,
+                                notes = notas.value
+                            )
+                        )
+                        navigateBack()
+                    }
+                ) {
+                    Text("Salvar")
+                }
             }
         }
     }

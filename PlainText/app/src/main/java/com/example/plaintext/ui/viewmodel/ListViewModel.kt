@@ -49,4 +49,9 @@ open class ListViewModel @Inject constructor () : ViewModel() {
         PasswordMemoryStore.add(password)
         refreshList()
     }
+
+    fun deletePassword(id: Int) {
+        PasswordMemoryStore.delete(id)
+        refreshList()
+    }
 }

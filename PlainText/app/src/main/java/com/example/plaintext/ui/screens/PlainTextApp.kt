@@ -79,6 +79,9 @@ fun PlainTextApp(
                 },
                 savePassword = { password ->
                     viewModel.savePassword(password)
+                },
+                deletePassword = { id ->
+                    viewModel.deletePassword(id)
                 }
             )
         }
