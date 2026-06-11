@@ -118,27 +118,28 @@ class ListViewModel @Inject constructor(
     }
 
     fun collectData() {
-        val mockPasswords = listOf(
-            Password(1, "Google", "denis@gmail.com", "123456"),
-            Password(2, "GitHub", "denis", "abcdef"),
-            Password(3, "Netflix", "denis@email.com", "senha123")
-        )
+        viewModelScope.launch {
 
-        listState = listState.copy(
-            listState = mockPasswords.map { it.name },
-            size = mockPasswords.size
-        )
-
-//        viewModelScope.launch {
-//            passwordDBStore.getList().collect { passwords ->
-//                println("Recebidos: ${passwords.size}")
+//            passwordDBStore.add(
+//                Password(1, "Google", "denis@gmail.com", "123456")
+//            )
 //
-//                listState = listState.copy(
-//                    listState = passwords.map { it.name },
-//                    size = passwords.size
-//                )
-//            }
-//        }
+//            passwordDBStore.add(
+//                Password(2, "GitHub", "denis", "abcdef")
+//            )
+//
+//            passwordDBStore.add(
+//                Password(3, "Netflix", "denis@email.com", "senha123")
+//            )
+
+            passwordDBStore.getList().collect { passwords ->
+
+                listState = listState.copy(
+                    listState = passwords.map { it.name },
+                    size = passwords.size
+                )
+            }
+        }
     }
 }
 
