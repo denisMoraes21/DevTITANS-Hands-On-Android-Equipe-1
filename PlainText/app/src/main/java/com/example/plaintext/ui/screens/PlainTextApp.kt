@@ -22,7 +22,7 @@ import com.example.plaintext.ui.viewmodel.ListViewModel
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
-import com.example.plaintext.ui.screens.register.RegisterScreen
+import androidx.compose.material3.Text
 
 @Composable
 fun PlainTextApp(
@@ -40,6 +40,9 @@ fun PlainTextApp(
         }
         composable<Screen.Login>{
             Login_screen(
+                navigateToSettings = {},
+                navigateToList = {
+                    appState.navigateToList()
                 navigateToSettings = {
                     appState.navController.navigate(Screen.Preferences)
                 },
@@ -76,6 +79,9 @@ fun PlainTextApp(
                     appState.navController.navigate(Screen.Preferences)
                 }
             )
+        }
+        composable<Screen.List> {
+            ListView()
         }
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
