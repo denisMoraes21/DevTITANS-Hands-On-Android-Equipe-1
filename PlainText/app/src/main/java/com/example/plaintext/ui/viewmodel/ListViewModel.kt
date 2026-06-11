@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.example.plaintext.data.PasswordMemoryStore
+
 data class ListViewState(
     var passwordList: List<PasswordInfo>,
     var isCollected: Boolean = false
@@ -55,8 +57,20 @@ open class ListViewModel @Inject constructor (
             }
         }
 
+    fun refreshList() {
+        listViewState = listViewState.copy(
+            passwordList = PasswordMemoryStore.getAll(),
+            isCollected = true
+        )
+    }
 
-    fun savePassword(password: PasswordInfo){
+    fun savePassword(password: PasswordInfo) {
+        PasswordMemoryStore.add(password)
+        refreshList()
+    }
 
+    fun deletePassword(id: Int) {
+        PasswordMemoryStore.delete(id)
+        refreshList()
     }
 }

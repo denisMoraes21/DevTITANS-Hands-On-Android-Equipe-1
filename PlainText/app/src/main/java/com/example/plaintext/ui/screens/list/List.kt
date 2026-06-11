@@ -44,24 +44,65 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.plaintext.data.model.PasswordInfo
 import androidx.compose.foundation.lazy.items
+import com.example.plaintext.data.PasswordMemoryStore
+
+// @Composable
+// fun ListView(
+//     viewModel: ListViewModel = hiltViewModel()
+// ) {
+//     Box(
+//         modifier = Modifier.fillMaxSize(),
+//         contentAlignment = Alignment.Center
+//     ) {
+//         Text("TELA LIST")
+//     }
+// //    val listState = viewModel.listViewState
+// //
+// //    ListItemContent(
+// //        modifier = Modifier.fillMaxSize(),
+// //        listState = listState,
+// //        navigateToEdit = {}
+// //    )
+// }
+
 
 @Composable
 fun ListView(
-    viewModel: ListViewModel = hiltViewModel()
+    viewModel: ListViewModel = hiltViewModel(),
+    navigateToEdit: (PasswordInfo) -> Unit,
+    navigateToSettings: () -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("TELA LIST")
+
+    val state = viewModel.listViewState
+
+    Scaffold(
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {}
+            )
+        },
+        floatingActionButton = {
+            AddButton {
+                navigateToEdit(
+                    PasswordInfo(
+                        id = 0,
+                        name = "",
+                        login = "",
+                        password = "",
+                        notes = ""
+                    )
+                )
+            }
+        }
+    ) { padding ->
+
+        ListItemContent(
+            modifier = Modifier.padding(padding),
+            listState = state,
+            navigateToEdit = navigateToEdit
+        )
     }
-//    val listState = viewModel.listViewState
-//
-//    ListItemContent(
-//        modifier = Modifier.fillMaxSize(),
-//        listState = listState,
-//        navigateToEdit = {}
-//    )
 }
 
 @Composable

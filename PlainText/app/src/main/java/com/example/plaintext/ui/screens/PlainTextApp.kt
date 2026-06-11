@@ -31,8 +31,7 @@ fun PlainTextApp(
     NavHost(
         navController = appState.navController,
 //        startDestination = Screen.Hello("DevTITANS"),
-        startDestination = Screen.List
-//        startDestination = Screen.EditList(PasswordInfo(1, "Denis", "denis123", "1234", "ola")),
+        startDestination = Screen.Login,
     )
     {
         composable<Screen.Hello>{
@@ -44,6 +43,40 @@ fun PlainTextApp(
                 navigateToSettings = {},
                 navigateToList = {
                     appState.navigateToList()
+                navigateToSettings = {
+                    appState.navController.navigate(Screen.Preferences)
+                },
+                navigateToList = {
+                    appState.navController.navigate(Screen.List)
+                },
+                navigateToRegister = {
+                    appState.navController.navigate(Screen.Register)
+                }
+            )
+        }
+        composable<Screen.Preferences> {
+            SettingsScreen(
+                navController = appState.navController
+            )
+        }
+        composable<Screen.Register> {
+            RegisterScreen(
+                navigateBack = {
+                    appState.navController.popBackStack()
+                }
+            )
+        }
+        composable<Screen.List> {
+            val viewModel: ListViewModel = hiltViewModel()
+            ListView(
+                viewModel = viewModel,
+                navigateToEdit = { password ->
+                    appState.navController.navigate(
+                        Screen.EditList(password)
+                    )
+                },
+                navigateToSettings = {
+                    appState.navController.navigate(Screen.Preferences)
                 }
             )
         }
@@ -54,10 +87,18 @@ fun PlainTextApp(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
         ) {
             val args = it.toRoute<Screen.EditList>()
+            val viewModel: ListViewModel = hiltViewModel()
             EditList(
                 args,
-                navigateBack = {},
-                savePassword = { password -> Unit }
+                navigateBack = {
+                    appState.navController.popBackStack()
+                },
+                savePassword = { password ->
+                    viewModel.savePassword(password)
+                },
+                deletePassword = { id ->
+                    viewModel.deletePassword(id)
+                }
             )
         }
     }
