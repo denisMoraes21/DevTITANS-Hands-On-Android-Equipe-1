@@ -31,7 +31,7 @@ object DataDiModule {
             context,
             PlainTextDatabase::class.java,
             "plaintext.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides

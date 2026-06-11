@@ -56,6 +56,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import com.example.plaintext.data.UserSession
+import com.example.plaintext.ui.viewmodel.LoginViewModel
 
 data class LoginState(
     val preencher: Boolean,
@@ -133,21 +134,25 @@ fun Login_screen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            val viewModel: LoginViewModel = hiltViewModel()
             val context = LocalContext.current
 
             Button(
                 onClick = {
-                    if ((username == UserSession.name && password == UserSession.password) ||
-                        (username == "admin" && password == "1234")) {
-                        navigateToList()
-                    }
-                    else {
-                        Toast.makeText(
-                            context,
-                            "Usuário ou senha inválidos",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    viewModel.login(
+                        username,
+                        password,
+                        onSuccess = {
+                            navigateToList()
+                        },
+                        onError = {
+                            Toast.makeText(
+                                context,
+                                "Usuário ou senha inválidos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
