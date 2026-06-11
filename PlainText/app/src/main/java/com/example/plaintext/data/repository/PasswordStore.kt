@@ -14,8 +14,8 @@ interface PasswordDBStore {
     fun get(id: Int): Password?
     suspend fun save(passwordInfo: PasswordInfo)
     suspend fun isEmpty(): Flow<Boolean>
-
     fun login(login: String, password: String): Flow<Password?>
+    suspend fun delete(password: Password)
 }
 
 class LocalPasswordDBStore(
@@ -50,6 +50,10 @@ class LocalPasswordDBStore(
 
     override fun login(login: String, password: String): Flow<Password?> {
         return passwordDao.getByLoginAndPassword(login, password)
+    }
+
+    override suspend fun delete(password: Password) {
+        passwordDao.delete(password)
     }
 
 }
