@@ -30,8 +30,8 @@ fun PlainTextApp(
 ) {
     NavHost(
         navController = appState.navController,
-        startDestination = Screen.Hello("DevTITANS"),
-//        startDestination = Screen.List
+//        startDestination = Screen.Hello("DevTITANS"),
+        startDestination = Screen.List
 //        startDestination = Screen.EditList(PasswordInfo(1, "Denis", "denis123", "1234", "ola")),
     )
     {
