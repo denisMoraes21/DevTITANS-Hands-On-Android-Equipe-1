@@ -1,5 +1,6 @@
 package com.example.plaintext.ui.screens.register
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,12 +12,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.plaintext.data.UserSession
+import com.example.plaintext.ui.viewmodel.RegisterViewModel
+
 
 @Composable
 fun RegisterScreen(
     navigateBack: () -> Unit
 ) {
+
+    val viewModel: RegisterViewModel = hiltViewModel()
+    val context = LocalContext.current
 
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
@@ -83,10 +91,28 @@ fun RegisterScreen(
 
             Button(
                 onClick = {
-                    UserSession.name = name
-                    UserSession.email = email
-                    UserSession.password = password
-                    navigateBack()
+                    if (password == confirmPassword &&
+                        name.isNotBlank() &&
+                        email.isNotBlank()
+                    ) {
+
+                        viewModel.register(name, email, password)
+
+                        Toast.makeText(
+                            context,
+                            "Conta criada com sucesso",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        navigateBack()
+
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Verifique os dados",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

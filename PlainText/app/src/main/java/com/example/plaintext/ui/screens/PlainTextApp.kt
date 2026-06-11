@@ -82,25 +82,17 @@ fun PlainTextApp(
                 }
             )
         }
-//        composable<Screen.List> {
-//            ListView()
-//        }
+
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
-        ) {
+        ) { it ->
             val args = it.toRoute<Screen.EditList>()
             val viewModel: ListViewModel = hiltViewModel()
             EditList(
-                args,
-                navigateBack = {
-                    appState.navController.popBackStack()
-                },
-                savePassword = { password ->
-                    viewModel.savePassword(password)
-                },
-                deletePassword = { id ->
-                    viewModel.deletePassword(id)
-                }
+                args = it.toRoute(),
+                navigateBack = { appState.navController.popBackStack() },
+                savePassword = { viewModel.savePassword(it) },
+                deletePassword = { viewModel.deletePassword(it) }
             )
         }
     }
