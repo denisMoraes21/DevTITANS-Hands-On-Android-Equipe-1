@@ -22,6 +22,8 @@ import com.example.plaintext.ui.viewmodel.ListViewModel
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
+import androidx.compose.material3.Text
+import com.example.plaintext.ui.screens.register.RegisterScreen
 
 @Composable
 fun PlainTextApp(
@@ -29,27 +31,60 @@ fun PlainTextApp(
 ) {
     NavHost(
         navController = appState.navController,
-        startDestination = Screen.Hello("DevTITANS"),
+//        startDestination = Screen.Hello("DevTITANS"),
+        startDestination = Screen.Login,
     )
     {
         composable<Screen.Hello>{
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
         }
+
         composable<Screen.Login>{
             Login_screen(
-                navigateToSettings = {},
-                navigateToList = {}
+                navigateToSettings = appState::navigateToPreferences,
+                navigateToList = appState::navigateToList,
+                navigateToRegister = {
+                    appState.navController.navigate(Screen.Register)
+                }
             )
         }
+
+        composable<Screen.Preferences> {
+            SettingsScreen(
+                navController = appState.navController
+            )
+        }
+        composable<Screen.Register> {
+            RegisterScreen(
+                navigateBack = {
+                    appState.navController.popBackStack()
+                }
+            )
+        }
+        composable<Screen.List> {
+            val viewModel: ListViewModel = hiltViewModel()
+            ListView(
+                viewModel = viewModel,
+                navigateToEdit = { password ->
+                    appState.navController.navigate(
+                        Screen.EditList(password)
+                    )
+                },
+                navigateToSettings = appState::navigateToPreferences
+            )
+        }
+
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
-        ) {
+        ) { it ->
             val args = it.toRoute<Screen.EditList>()
+            val viewModel: ListViewModel = hiltViewModel()
             EditList(
-                args,
-                navigateBack = {},
-                savePassword = { password -> Unit }
+                args = it.toRoute(),
+                navigateBack = { appState.navController.popBackStack() },
+                savePassword = { viewModel.savePassword(it) },
+                deletePassword = { viewModel.deletePassword(it) }
             )
         }
     }

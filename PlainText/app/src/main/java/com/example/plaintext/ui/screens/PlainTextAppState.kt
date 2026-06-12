@@ -23,15 +23,18 @@ sealed class Screen() {
     object Login;
 
     @Serializable
+    object Register
+
+    @Serializable
+    object List;
+
+    @Serializable
     data class Hello(
         val name: String?
     )
 
     @Serializable
     object Preferences;
-
-    @Serializable
-    object List;
 
     @Serializable
     data class EditList(
@@ -68,6 +71,13 @@ class JetcasterAppState(
 
     fun navigateToLogin(){
         navController.navigate(Screen.Login)
+    }
+
+    fun navigateToList() {
+        navController.navigate(Screen.List)
+    }
+    fun navigateToPreferences(){
+        navController.navigate(Screen.Preferences)
     }
 
 }

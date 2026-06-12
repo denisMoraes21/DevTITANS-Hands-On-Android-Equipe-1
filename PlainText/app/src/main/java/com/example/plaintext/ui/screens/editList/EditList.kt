@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.example.plaintext.data.model.PasswordInfo
 import com.example.plaintext.ui.screens.Screen
 import com.example.plaintext.ui.screens.login.TopBarComponent
+import com.example.plaintext.data.PasswordMemoryStore
 
 data class EditListState(
     val nomeState: MutableState<String>,
@@ -49,9 +50,108 @@ fun isPasswordEmpty(password: PasswordInfo): Boolean {
 fun EditList(
     args: Screen.EditList,
     navigateBack: () -> Unit,
-    savePassword: (password: PasswordInfo) -> Unit
+    savePassword: (password: PasswordInfo) -> Unit,
+    deletePassword: (id: Int) -> Unit = {}
 ) {
 
+    val nome = rememberSaveable {
+        mutableStateOf(args.password.name)
+    }
+
+    val usuario = rememberSaveable {
+        mutableStateOf(args.password.login)
+    }
+
+    val senha = rememberSaveable {
+        mutableStateOf(args.password.password)
+    }
+
+    val notas = rememberSaveable {
+        mutableStateOf(args.password.notes)
+    }
+
+    Scaffold(
+        topBar = {
+            TopBarComponent()
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Cadastro de Senha",
+                fontSize = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            EditInput(
+                textInputLabel = "Nome",
+                textInputState = nome
+            )
+
+            EditInput(
+                textInputLabel = "Usuário",
+                textInputState = usuario
+            )
+
+            EditInput(
+                textInputLabel = "Senha",
+                textInputState = senha
+            )
+
+            EditInput(
+                textInputLabel = "Notas",
+                textInputState = notas,
+                textInputHeight = 120
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                if (args.password.id != 0) {
+                    Button(
+                        onClick = {
+                            println("BOTÃO DELETAR CLICADO")
+                            println(args.password.id)
+
+                            deletePassword(args.password.id)
+                            navigateBack()
+                        }
+                    ) {
+                        Text("Deletar")
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        savePassword(
+                            PasswordInfo(
+                                id = args.password.id,
+                                name = nome.value,
+                                login = usuario.value,
+                                password = senha.value,
+                                notes = notas.value
+                            )
+                        )
+                        navigateBack()
+                    }
+                ) {
+                    Text("Salvar")
+                }
+            }
+        }
+    }
 }
 
 

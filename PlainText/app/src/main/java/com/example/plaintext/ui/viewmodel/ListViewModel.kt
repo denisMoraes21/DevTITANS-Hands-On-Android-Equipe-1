@@ -28,18 +28,63 @@ data class ListViewState(
 
 //Utilize o passwordBDStore para obter a lista de senhas e salva-las
 @HiltViewModel
-open class ListViewModel @Inject constructor () : ViewModel() {
+open class ListViewModel @Inject constructor (
+    private val passwordDBStore: PasswordDBStore
+) : ViewModel() {
     var listViewState by mutableStateOf(ListViewState(passwordList = emptyList()))
         private set
 
     init{
         viewModelScope.launch {
-                //execute o metodo getList() do passwordDBStore e colete o resultado
+
+            passwordDBStore.getList().collect { passwords ->
+
+                listViewState = ListViewState(
+                    passwordList = passwords.map {
+                        PasswordInfo(
+                            id = it.id,
+                            name = it.name,
+                            login = it.login,
+                            password = it.password,
+                            notes = it.notes ?: ""
+                        )
+                    },
+                    isCollected = true
+                )
+            }
             }
         }
 
+//    fun refreshList() {
+//        listViewState = listViewState.copy(
+//            passwordList = PasswordMemoryStore.getAll(),
+//            isCollected = true
+//        )
+//    }
 
-    fun savePassword(password: PasswordInfo){
+    fun savePassword(passwordInfo: PasswordInfo) {
+        viewModelScope.launch {
+            passwordDBStore.save(passwordInfo)
+        }
+//        refreshList()
+    }
 
+    fun deletePassword(id: Int) {
+        println("VIEWMODEL -> deletePassword chamado")
+
+        viewModelScope.launch {
+            println("ID recebido: $id")
+
+            val password = passwordDBStore.get(id)
+
+            println("Password encontrada: $password")
+
+            if (password != null) {
+                passwordDBStore.delete(password)
+                println("DELETADO")
+            } else {
+                println("NÃO ENCONTROU")
+            }
+        }
     }
 }

@@ -55,6 +55,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
+import com.example.plaintext.data.UserSession
+import com.example.plaintext.ui.viewmodel.LoginViewModel
 
 data class LoginState(
     val preencher: Boolean,
@@ -68,9 +70,108 @@ data class LoginState(
 fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
+    navigateToRegister: () -> Unit,
     viewModel: PreferencesViewModel = hiltViewModel()
 ) {
 
+    var username by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var password by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    Scaffold(
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {} // Placeholder
+            )
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(padding)
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "Password Manager",
+                fontSize = 28.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Faça login para acessar suas senhas"
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Usuário") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Senha") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            val viewModel: LoginViewModel = hiltViewModel()
+            val context = LocalContext.current
+
+            Button(
+                onClick = {
+                    viewModel.login(
+                        username,
+                        password,
+                        onSuccess = {
+                            navigateToList()
+                        },
+                        onError = {
+                            Toast.makeText(
+                                context,
+                                "Usuário ou senha inválidos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Entrar")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    // futuramente abrir cadastro
+                    navigateToRegister()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Criar Conta")
+            }
+        }
+    }
 }
 
 @Composable
@@ -101,38 +202,39 @@ fun TopBarComponent(
     navigateToSensores: (() -> Unit?)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val shouldShowDialog = remember { mutableStateOf(false) }
-
-    if (shouldShowDialog.value) {
-        MyAlertDialog(shouldShowDialog = shouldShowDialog)
-    }
+    var showAboutDialog by remember { mutableStateOf(false) }
 
     TopAppBar(
         title = { Text("PlainText") },
         actions = {
-            if (navigateToSettings != null && navigateToSensores != null) {
+            if (navigateToSettings != null || navigateToSensores != null) {
                 IconButton(onClick = { expanded = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Menu")
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Menu"
+                    )
                 }
+
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
+                    if (navigateToSettings != null) {
+                        DropdownMenuItem(
+                            text = { Text("Configurações") },
+                            onClick = {
+                                expanded = false
+                                navigateToSettings()
+                            },
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
                     DropdownMenuItem(
-                        text = { Text("Configurações") },
+                        text = { Text("Sobre") },
                         onClick = {
-                            navigateToSettings();
-                            expanded = false;
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text("Sobre");
-                        },
-                        onClick = {
-                            shouldShowDialog.value = true;
-                            expanded = false;
+                            expanded = false
+                            showAboutDialog = true
                         },
                         modifier = Modifier.padding(8.dp)
                     )
@@ -140,4 +242,29 @@ fun TopBarComponent(
             }
         }
     )
+
+    if (showAboutDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showAboutDialog = false
+            },
+            title = {
+                Text(text = "Sobre")
+            },
+            text = {
+                Text(
+                    text = "PlainText Password Manager v1.0\n\nAplicativo para gerenciamento local de senhas."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAboutDialog = false
+                    }
+                ) {
+                    Text(text = "OK")
+                }
+            }
+        )
+    }
 }

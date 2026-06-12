@@ -69,6 +69,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.plaintext.R
+import com.example.plaintext.data.repository.PasswordDBStore
+import com.example.plaintext.data.model.Password
 import com.example.plaintext.ui.screens.Screen
 import com.example.plaintext.ui.theme.PlainTextTheme
 import com.example.plaintext.ui.viewmodel.ListViewState
@@ -103,12 +105,13 @@ data class listViewState(
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
-    private val dbSimulator: dbSimulator
+    private val passwordDBStore: PasswordDBStore
 ) : ViewModel() {
     var listState by mutableStateOf(listViewState())
         private set
 
     init {
+
         viewModelScope.launch {
             collectData()
         }
@@ -116,8 +119,25 @@ class ListViewModel @Inject constructor(
 
     fun collectData() {
         viewModelScope.launch {
-            dbSimulator.getData().collect {
-                listState = listState.copy(listState = it, size = it.size)
+
+//            passwordDBStore.add(
+//                Password(1, "Google", "denis@gmail.com", "123456")
+//            )
+//
+//            passwordDBStore.add(
+//                Password(2, "GitHub", "denis", "abcdef")
+//            )
+//
+//            passwordDBStore.add(
+//                Password(3, "Netflix", "denis@email.com", "senha123")
+//            )
+
+            passwordDBStore.getList().collect { passwords ->
+
+                listState = listState.copy(
+                    listState = passwords.map { it.name },
+                    size = passwords.size
+                )
             }
         }
     }
