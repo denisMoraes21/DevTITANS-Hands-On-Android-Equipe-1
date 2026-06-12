@@ -9,8 +9,6 @@ import com.example.plaintext.data.PlainTextDatabase
 import com.example.plaintext.data.dao.PasswordDao
 import com.example.plaintext.data.repository.LocalPasswordDBStore
 import com.example.plaintext.data.repository.PasswordDBStore
-import com.example.plaintext.ui.screens.hello.ListViewModel
-import com.example.plaintext.ui.screens.hello.dbSimulator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

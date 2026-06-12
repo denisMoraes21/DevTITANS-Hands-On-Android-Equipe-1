@@ -29,32 +29,25 @@ sealed class Screen() {
     object List;
 
     @Serializable
-    data class Hello(
-        val name: String?
-    )
-
-    @Serializable
     object Preferences;
 
     @Serializable
     data class EditList(
-        val password: PasswordInfo
+        val password: PasswordInfo,
+        val title: String
     );
-
-    @Serializable
-    object sensors;
 }
 
 @Composable
-fun rememberJetcasterAppState(
+fun rememberPlainTextAppState(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current
 ) = remember(navController, context) {
-    JetcasterAppState(navController, context)
+    PlainTextAppState(navController, context)
 }
 
 
-class JetcasterAppState(
+class PlainTextAppState(
     val navController: NavHostController,
     private val context: Context
 ) {
@@ -65,10 +58,6 @@ class JetcasterAppState(
         return currentRoute != route
     }
 
-    fun navigateToHello(name: String?){
-        navController.navigate(Screen.Hello(name))
-    }
-
     fun navigateToLogin(){
         navController.navigate(Screen.Login)
     }
@@ -76,8 +65,19 @@ class JetcasterAppState(
     fun navigateToList() {
         navController.navigate(Screen.List)
     }
-    fun navigateToPreferences(){
+
+    fun navigateToPreferences() {
         navController.navigate(Screen.Preferences)
+    }
+
+    fun logout() {
+        navController.navigate(Screen.Login) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
+
+    fun navigateToEditList(password: PasswordInfo, title: String) {
+        navController.navigate(Screen.EditList(password, title))
     }
 
 }

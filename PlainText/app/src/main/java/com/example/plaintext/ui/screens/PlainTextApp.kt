@@ -12,47 +12,62 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
 import com.example.plaintext.data.model.PasswordInfo
 import com.example.plaintext.ui.screens.editList.EditList
-import com.example.plaintext.ui.screens.hello.Hello_screen
 import com.example.plaintext.ui.screens.list.AddButton
 import com.example.plaintext.ui.screens.list.ListView
 import com.example.plaintext.ui.screens.login.Login_screen
 import com.example.plaintext.ui.screens.login.TopBarComponent
 import com.example.plaintext.ui.screens.preferences.SettingsScreen
 import com.example.plaintext.ui.viewmodel.ListViewModel
-import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
 import com.example.plaintext.ui.screens.register.RegisterScreen
 
 @Composable
 fun PlainTextApp(
-    appState: JetcasterAppState = rememberJetcasterAppState()
+    appState: PlainTextAppState = rememberPlainTextAppState()
 ) {
+    val context = LocalContext.current
+    val onExit = { (context as? Activity)?.finish() }
+
     NavHost(
         navController = appState.navController,
-//        startDestination = Screen.Hello("DevTITANS"),
         startDestination = Screen.Login,
     )
     {
-        composable<Screen.Hello>{
-            var args = it.toRoute<Screen.Hello>()
-            Hello_screen(args)
-        }
-
         composable<Screen.Login>{
             Login_screen(
-                navigateToSettings = appState::navigateToPreferences,
-                navigateToList = appState::navigateToList,
+                navigateToSettings = { 
+                    appState.navigateToPreferences()
+                    Unit
+                },
+                navigateToList = { 
+                    appState.navigateToList()
+                    Unit
+                },
                 navigateToRegister = {
                     appState.navController.navigate(Screen.Register)
+                },
+                onExit = { 
+                    onExit()
+                    Unit
                 }
             )
         }
 
         composable<Screen.Preferences> {
             SettingsScreen(
-                navController = appState.navController
+                navController = appState.navController,
+                onLogout = { 
+                    appState.logout()
+                    Unit
+                },
+                onExit = { 
+                    onExit()
+                    Unit
+                }
             )
         }
         composable<Screen.Register> {
@@ -67,11 +82,21 @@ fun PlainTextApp(
             ListView(
                 viewModel = viewModel,
                 navigateToEdit = { password ->
-                    appState.navController.navigate(
-                        Screen.EditList(password)
-                    )
+                    val title = if (password.id == 0) "Adicionar nova senha" else "Editar Senha"
+                    appState.navigateToEditList(password, title)
                 },
-                navigateToSettings = appState::navigateToPreferences
+                navigateToSettings = { 
+                    appState.navigateToPreferences()
+                    Unit
+                },
+                onLogout = { 
+                    appState.logout()
+                    Unit
+                },
+                onExit = { 
+                    onExit()
+                    Unit
+                }
             )
         }
 
@@ -81,7 +106,7 @@ fun PlainTextApp(
             val args = it.toRoute<Screen.EditList>()
             val viewModel: ListViewModel = hiltViewModel()
             EditList(
-                args = it.toRoute(),
+                args = args,
                 navigateBack = { appState.navController.popBackStack() },
                 savePassword = { viewModel.savePassword(it) },
                 deletePassword = { viewModel.deletePassword(it) }

@@ -27,11 +27,17 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(navController: NavHostController?,
+                   onLogout: () -> Unit = {},
+                   onExit: () -> Unit = {},
                    viewModel: PreferencesViewModel = hiltViewModel()
 ){
     Scaffold(
         topBar = {
-            TopBarComponent()
+            TopBarComponent(
+                navigateBack = { navController?.popBackStack() },
+                onLogout = onLogout,
+                onExit = onExit
+            )
         }
     ){ padding ->
         SettingsContent(modifier = Modifier.padding(padding), viewModel)

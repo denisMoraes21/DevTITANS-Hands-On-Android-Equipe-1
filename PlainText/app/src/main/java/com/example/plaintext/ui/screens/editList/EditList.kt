@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,9 +71,37 @@ fun EditList(
         mutableStateOf(args.password.notes)
     }
 
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirmation) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text("Confirmar Exclusão") },
+            text = { Text("Tem certeza que deseja excluir esta senha?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        deletePassword(args.password.id)
+                        showDeleteConfirmation = false
+                        navigateBack()
+                    }
+                ) {
+                    Text("Excluir")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDeleteConfirmation = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
-            TopBarComponent()
+            TopBarComponent(
+                navigateBack = navigateBack
+            )
         }
     ) { padding ->
 
@@ -86,7 +115,7 @@ fun EditList(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Cadastro de Senha",
+                text = args.title,
                 fontSize = 24.sp
             )
 
@@ -122,11 +151,7 @@ fun EditList(
                 if (args.password.id != 0) {
                     Button(
                         onClick = {
-                            println("BOTÃO DELETAR CLICADO")
-                            println(args.password.id)
-
-                            deletePassword(args.password.id)
-                            navigateBack()
+                            showDeleteConfirmation = true
                         }
                     ) {
                         Text("Deletar")
@@ -189,7 +214,7 @@ fun EditInput(
 @Composable
 fun EditListPreview() {
     EditList(
-        Screen.EditList(PasswordInfo(1, "Nome", "Usuário", "Senha", "Notas")),
+        Screen.EditList(PasswordInfo(1, "Nome", "Usuário", "Senha", "Notas"), "Editar Senha"),
         navigateBack = {},
         savePassword = {}
     )

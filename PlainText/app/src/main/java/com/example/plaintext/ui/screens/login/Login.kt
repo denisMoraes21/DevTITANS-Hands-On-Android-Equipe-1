@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,22 +73,27 @@ fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
     navigateToRegister: () -> Unit,
-    viewModel: PreferencesViewModel = hiltViewModel()
+    onExit: () -> Unit = {},
+    preferencesViewModel: PreferencesViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
+    val uiState = loginViewModel.uiState
+    val preferencesState = preferencesViewModel.preferencesState
+    val context = LocalContext.current
 
-    var username by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var password by rememberSaveable {
-        mutableStateOf("")
+    // Pré-preenchimento automático se configurado nas preferências
+    LaunchedEffect(preferencesState.preencher) {
+        if (preferencesState.preencher && uiState.username.isEmpty()) {
+            loginViewModel.onUsernameChange(preferencesState.login)
+            loginViewModel.onPasswordChange(preferencesState.password)
+        }
     }
 
     Scaffold(
         topBar = {
             TopBarComponent(
                 navigateToSettings = navigateToSettings,
-                navigateToSensores = {} // Placeholder
+                onExit = onExit
             )
         }
     ) { padding ->
@@ -116,32 +123,31 @@ fun Login_screen(
             Spacer(modifier = Modifier.height(40.dp))
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = uiState.username,
+                onValueChange = { loginViewModel.onUsernameChange(it) },
                 label = { Text("Usuário") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = uiState.password,
+                onValueChange = { loginViewModel.onPasswordChange(it) },
                 label = { Text("Senha") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            val viewModel: LoginViewModel = hiltViewModel()
-            val context = LocalContext.current
-
             Button(
                 onClick = {
-                    viewModel.login(
-                        username,
-                        password,
+                    loginViewModel.login(
+                        expectedUser = preferencesState.login,
+                        expectedPass = preferencesState.password,
                         onSuccess = {
                             navigateToList()
                         },
@@ -154,24 +160,39 @@ fun Login_screen(
                         }
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
             ) {
-                Text("Entrar")
+                if (uiState.isLoading) {
+                    Text("Entrando...")
+                } else {
+                    Text("Entrar")
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = {
-                    // futuramente abrir cadastro
                     navigateToRegister()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
             ) {
                 Text("Criar Conta")
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Login_screenPreview() {
+    Login_screen(
+        navigateToSettings = {},
+        navigateToList = {},
+        navigateToRegister = {}
+    )
 }
 
 @Composable
@@ -198,43 +219,76 @@ fun MyAlertDialog(shouldShowDialog: MutableState<Boolean>) {
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TopBarComponent(
-    navigateToSettings: (() -> Unit?)? = null,
-    navigateToSensores: (() -> Unit?)? = null,
+    navigateToSettings: (() -> Unit)? = null,
+    navigateToSensores: (() -> Unit)? = null,
+    navigateBack: (() -> Unit)? = null,
+    onLogout: (() -> Unit)? = null,
+    onExit: (() -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
 
     TopAppBar(
         title = { Text("PlainText") },
-        actions = {
-            if (navigateToSettings != null || navigateToSensores != null) {
-                IconButton(onClick = { expanded = true }) {
+        navigationIcon = {
+            if (navigateBack != null) {
+                IconButton(onClick = navigateBack) {
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Menu"
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Voltar"
+                    )
+                }
+            }
+        },
+        actions = {
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "Menu"
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                if (navigateToSettings != null) {
+                    DropdownMenuItem(
+                        text = { Text("Configurações") },
+                        onClick = {
+                            expanded = false
+                            navigateToSettings()
+                        },
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
 
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    if (navigateToSettings != null) {
-                        DropdownMenuItem(
-                            text = { Text("Configurações") },
-                            onClick = {
-                                expanded = false
-                                navigateToSettings()
-                            },
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-
+                if (onLogout != null) {
                     DropdownMenuItem(
-                        text = { Text("Sobre") },
+                        text = { Text("Logout") },
                         onClick = {
                             expanded = false
-                            showAboutDialog = true
+                            onLogout()
+                        },
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+
+                DropdownMenuItem(
+                    text = { Text("Sobre") },
+                    onClick = {
+                        expanded = false
+                        showAboutDialog = true
+                    },
+                    modifier = Modifier.padding(8.dp)
+                )
+
+                if (onExit != null) {
+                    DropdownMenuItem(
+                        text = { Text("Sair") },
+                        onClick = {
+                            expanded = false
+                            onExit()
                         },
                         modifier = Modifier.padding(8.dp)
                     )

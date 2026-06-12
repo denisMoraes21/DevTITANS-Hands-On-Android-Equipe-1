@@ -70,7 +70,9 @@ import com.example.plaintext.data.PasswordMemoryStore
 fun ListView(
     viewModel: ListViewModel = hiltViewModel(),
     navigateToEdit: (PasswordInfo) -> Unit,
-    navigateToSettings: () -> Unit
+    navigateToSettings: () -> Unit,
+    onLogout: () -> Unit = {},
+    onExit: () -> Unit = {}
 ) {
 
     val state = viewModel.listViewState
@@ -79,7 +81,8 @@ fun ListView(
         topBar = {
             TopBarComponent(
                 navigateToSettings = navigateToSettings,
-                navigateToSensores = {}
+                onLogout = onLogout,
+                onExit = onExit
             )
         },
         floatingActionButton = {
@@ -129,15 +132,24 @@ fun ListItemContent(
             }
 
             else -> {
-                LazyColumn(
-                    modifier = modifier
-                        .fillMaxSize()
-                ) {
-                    items(listState.passwordList.size) {
-                        ListItem(
-                            listState.passwordList[it],
-                            navigateToEdit
-                        )
+                if (listState.passwordList.isEmpty()) {
+                    Box(
+                        modifier = modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Nenhuma senha salva ainda.", fontSize = 18.sp)
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = modifier
+                            .fillMaxSize()
+                    ) {
+                        items(listState.passwordList.size) {
+                            ListItem(
+                                listState.passwordList[it],
+                                navigateToEdit
+                            )
+                        }
                     }
                 }
             }
@@ -189,5 +201,14 @@ fun ListItem(
             tint = Color.White
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ListViewPreview() {
+    ListView(
+        navigateToEdit = {},
+        navigateToSettings = {}
+    )
 }
 
