@@ -20,10 +20,7 @@ class LoginViewModel @Inject constructor(
         onError: () -> Unit
     ) {
         viewModelScope.launch {
-            println(username)
-            println(password)
             val user = store.login(username, password).first()
-            println(user)
             if (user != null) {
                 onSuccess()
             } else {

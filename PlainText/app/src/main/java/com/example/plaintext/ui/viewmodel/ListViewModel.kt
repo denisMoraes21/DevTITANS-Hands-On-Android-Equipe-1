@@ -70,10 +70,20 @@ open class ListViewModel @Inject constructor (
     }
 
     fun deletePassword(id: Int) {
+        println("VIEWMODEL -> deletePassword chamado")
+
         viewModelScope.launch {
+            println("ID recebido: $id")
+
             val password = passwordDBStore.get(id)
+
+            println("Password encontrada: $password")
+
             if (password != null) {
                 passwordDBStore.delete(password)
+                println("DELETADO")
+            } else {
+                println("NÃO ENCONTROU")
             }
         }
     }

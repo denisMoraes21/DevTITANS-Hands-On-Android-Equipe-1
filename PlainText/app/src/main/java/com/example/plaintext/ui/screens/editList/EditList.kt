@@ -122,6 +122,9 @@ fun EditList(
                 if (args.password.id != 0) {
                     Button(
                         onClick = {
+                            println("BOTÃO DELETAR CLICADO")
+                            println(args.password.id)
+
                             deletePassword(args.password.id)
                             navigateBack()
                         }

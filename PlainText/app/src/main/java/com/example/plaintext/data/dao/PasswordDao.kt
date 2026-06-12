@@ -13,7 +13,7 @@ abstract class PasswordDao : BaseDao<Password> {
             SELECT * FROM passwords WHERE id = :id
         """
     )
-    abstract fun getByID(id: Int): Password?
+    abstract suspend fun getByID(id: Int): Password?
 
     @Query("""
         SELECT * FROM passwords WHERE name = :name
