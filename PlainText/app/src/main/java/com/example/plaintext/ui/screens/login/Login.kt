@@ -202,38 +202,39 @@ fun TopBarComponent(
     navigateToSensores: (() -> Unit?)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val shouldShowDialog = remember { mutableStateOf(false) }
-
-    if (shouldShowDialog.value) {
-        MyAlertDialog(shouldShowDialog = shouldShowDialog)
-    }
+    var showAboutDialog by remember { mutableStateOf(false) }
 
     TopAppBar(
         title = { Text("PlainText") },
         actions = {
-            if (navigateToSettings != null && navigateToSensores != null) {
+            if (navigateToSettings != null || navigateToSensores != null) {
                 IconButton(onClick = { expanded = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Menu")
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Menu"
+                    )
                 }
+
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
+                    if (navigateToSettings != null) {
+                        DropdownMenuItem(
+                            text = { Text("Configurações") },
+                            onClick = {
+                                expanded = false
+                                navigateToSettings()
+                            },
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
                     DropdownMenuItem(
-                        text = { Text("Configurações") },
+                        text = { Text("Sobre") },
                         onClick = {
-                            navigateToSettings();
-                            expanded = false;
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text("Sobre");
-                        },
-                        onClick = {
-                            shouldShowDialog.value = true;
-                            expanded = false;
+                            expanded = false
+                            showAboutDialog = true
                         },
                         modifier = Modifier.padding(8.dp)
                     )
@@ -241,4 +242,29 @@ fun TopBarComponent(
             }
         }
     )
+
+    if (showAboutDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showAboutDialog = false
+            },
+            title = {
+                Text(text = "Sobre")
+            },
+            text = {
+                Text(
+                    text = "PlainText Password Manager v1.0\n\nAplicativo para gerenciamento local de senhas."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAboutDialog = false
+                    }
+                ) {
+                    Text(text = "OK")
+                }
+            }
+        )
+    }
 }

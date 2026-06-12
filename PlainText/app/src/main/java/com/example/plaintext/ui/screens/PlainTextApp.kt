@@ -39,23 +39,17 @@ fun PlainTextApp(
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
         }
+
         composable<Screen.Login>{
             Login_screen(
-//                navigateToSettings = {},
-//                navigateToList = {
-//                    appState.navigateToList()
-//                },
-                navigateToSettings = {
-                    appState.navController.navigate(Screen.Preferences)
-                },
-                navigateToList = {
-                    appState.navController.navigate(Screen.List)
-                },
+                navigateToSettings = appState::navigateToPreferences,
+                navigateToList = appState::navigateToList,
                 navigateToRegister = {
                     appState.navController.navigate(Screen.Register)
                 }
             )
         }
+
         composable<Screen.Preferences> {
             SettingsScreen(
                 navController = appState.navController
@@ -77,9 +71,7 @@ fun PlainTextApp(
                         Screen.EditList(password)
                     )
                 },
-                navigateToSettings = {
-                    appState.navController.navigate(Screen.Preferences)
-                }
+                navigateToSettings = appState::navigateToPreferences
             )
         }
 
